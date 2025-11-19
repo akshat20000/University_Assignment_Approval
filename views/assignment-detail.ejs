@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= assignment.title %> - Assignment Details</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .nav h1 { font-size: 1.5rem; }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 500;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .card h2 {
+      margin-bottom: 1rem;
+      color: #4a5568;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .status-draft { background: #e2e8f0; color: #4a5568; }
+    .status-submitted { background: #bee3f8; color: #2c5282; }
+    .status-under_professor_review { background: #faf089; color: #744210; }
+    .status-under_hod_review { background: #fed7d7; color: #742a2a; }
+    .status-approved { background: #c6f6d5; color: #22543d; }
+    .status-rejected { background: #feb2b2; color: #742a2a; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .info-item {
+      padding: 1rem;
+      background: #f7fafc;
+      border-radius: 8px;
+    }
+    .info-item label {
+      display: block;
+      font-weight: 600;
+      color: #718096;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .info-item p {
+      color: #2d3748;
+      font-size: 1rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 1rem;
+      margin-right: 1rem;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-success {
+      background: #48bb78;
+      color: white;
+    }
+    .btn-danger {
+      background: #f56565;
+      color: white;
+    }
+    .btn-secondary {
+      background: #718096;
+      color: white;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 100px;
+    }
+    .feedback-box {
+      background: #f7fafc;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      margin: 1rem 0;
+    }
+    .feedback-box h4 {
+      color: #4a5568;
+      margin-bottom: 0.5rem;
+    }
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline-item {
+      position: relative;
+      padding: 1rem 0;
+      border-left: 2px solid #e2e8f0;
+      padding-left: 2rem;
+      margin-bottom: 1rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 1.5rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #667eea;
+    }
+    .timeline-item time {
+      font-size: 0.85rem;
+      color: #718096;
+    }
+    .timeline-item p {
+      margin-top: 0.5rem;
+      color: #2d3748;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="nav">
+      <h1>📚 Assignment System</h1>
+      <div class="nav-links">
+        <a href="/">Dashboard</a>
+        <a href="/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2><%= assignment.title %></h2>
+      <span class="status-badge status-<%= assignment.status %>">
+        <%= assignment.status.replace(/_/g, ' ').toUpperCase() %>
+      </span>
+      <p style="color: #718096; margin-bottom: 1rem;">Version <%= assignment.version %></p>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Student</label>
+          <p><%= assignment.studentName %></p>
+        </div>
+        <div class="info-item">
+          <label>Course</label>
+          <p><%= assignment.course %></p>
+        </div>
+        <div class="info-item">
+          <label>Created</label>
+          <p><%= new Date(assignment.createdAt).toLocaleString() %></p>
+        </div>
+        <div class="info-item">
+          <label>Submitted</label>
+          <p><%= assignment.submittedAt ? new Date(assignment.submittedAt).toLocaleString() : 'Not submitted' %></p>
+        </div>
+      </div>
+
+      <div style="margin: 1.5rem 0;">
+        <label style="font-weight: 600; color: #4a5568; display: block; margin-bottom: 0.5rem;">Description</label>
+        <p style="color: #2d3748;"><%= assignment.description %></p>
+      </div>
+
+      <% if (assignment.fileName) { %>
+        <div style="margin: 1.5rem 0;">
+          <label style="font-weight: 600; color: #4a5568; display: block; margin-bottom: 0.5rem;">Attached File</label>
+          <a href="/<%= assignment.filePath %>" download class="btn btn-secondary">📥 Download <%= assignment.fileName %></a>
+        </div>
+      <% } %>
+
+      <!-- Student Actions -->
+      <% if (user.role === 'student' && assignment.studentId.toString() === user.id) { %>
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+          <% if (assignment.status === 'draft') { %>
+            <form action="/assignments/<%= assignment._id %>/submit" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-primary">Submit for Review</button>
+            </form>
+          <% } %>
+          
+          <% if (assignment.status === 'rejected') { %>
+            <h3 style="color: #f56565; margin-bottom: 1rem;">Assignment Rejected - Resubmission Required</h3>
+            <form action="/assignments/<%= assignment._id %>/resubmit" method="POST" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="file">Upload Revised Assignment *</label>
+                <input type="file" id="file" name="file" required accept=".pdf,.doc,.docx,.txt">
+              </div>
+              <button type="submit" class="btn btn-success">Resubmit Assignment</button>
+            </form>
+          <% } %>
+        </div>
+      <% } %>
+
+      <!-- Professor Review -->
+      <% if (user.role === 'professor' && (assignment.status === 'submitted' || assignment.status === 'under_professor_review')) { %>
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+          <h3 style="margin-bottom: 1rem;">Professor Review</h3>
+          <form action="/assignments/<%= assignment._id %>/professor-review" method="POST">
+            <div class="form-group">
+              <label for="feedback">Feedback</label>
+              <textarea id="feedback" name="feedback" required placeholder="Provide your feedback here..."></textarea>
+            </div>
+            <button type="submit" name="action" value="approve" class="btn btn-success">✓ Approve & Forward to HOD</button>
+            <button type="submit" name="action" value="reject" class="btn btn-danger">✗ Reject</button>
+          </form>
+        </div>
+      <% } %>
+
+      <!-- HOD Review -->
+      <% if (user.role === 'hod' && assignment.status === 'under_hod_review') { %>
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+          <h3 style="margin-bottom: 1rem;">HOD Final Approval</h3>
+          
+          <% if (assignment.professorFeedback) { %>
+            <div class="feedback-box">
+              <h4>Professor's Feedback</h4>
+              <p><%= assignment.professorFeedback %></p>
+              <p style="font-size: 0.85rem; color: #718096; margin-top: 0.5rem;">
+                Reviewed by: <%= assignment.professorId ? assignment.professorId.name : 'N/A' %>
+              </p>
+            </div>
+          <% } %>
+
+          <form action="/assignments/<%= assignment._id %>/hod-review" method="POST">
+            <div class="form-group">
+              <label for="feedback">HOD Feedback</label>
+              <textarea id="feedback" name="feedback" required placeholder="Provide your final feedback..."></textarea>
+            </div>
+            <button type="submit" name="action" value="approve" class="btn btn-success">✓ Final Approval</button>
+            <button type="submit" name="action" value="reject" class="btn btn-danger">✗ Reject</button>
+          </form>
+        </div>
+      <% } %>
+
+      <!-- Display Feedback -->
+      <% if (assignment.professorFeedback || assignment.hodFeedback) { %>
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+          <h3 style="margin-bottom: 1rem;">Feedback</h3>
+          
+          <% if (assignment.professorFeedback) { %>
+            <div class="feedback-box">
+              <h4>Professor's Feedback</h4>
+              <p><%= assignment.professorFeedback %></p>
+              <p style="font-size: 0.85rem; color: #718096; margin-top: 0.5rem;">
+                Reviewed: <%= assignment.professorReviewedAt ? new Date(assignment.professorReviewedAt).toLocaleString() : '' %>
+              </p>
+            </div>
+          <% } %>
+
+          <% if (assignment.hodFeedback) { %>
+            <div class="feedback-box" style="border-color: #48bb78;">
+              <h4>HOD's Feedback</h4>
+              <p><%= assignment.hodFeedback %></p>
+              <p style="font-size: 0.85rem; color: #718096; margin-top: 0.5rem;">
+                Reviewed: <%= assignment.hodReviewedAt ? new Date(assignment.hodReviewedAt).toLocaleString() : '' %>
+              </p>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Audit Trail -->
+    <div class="card">
+      <h2>Audit Trail</h2>
+      <div class="timeline">
+        <% audits.forEach(audit => { %>
+          <div class="timeline-item">
+            <time><%= new Date(audit.timestamp).toLocaleString() %></time>
+            <p><strong><%= audit.userId ? audit.userId.name : 'System' %></strong>: <%= audit.details %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
+  </div>
+</body>
+</html>
