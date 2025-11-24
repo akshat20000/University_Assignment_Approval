@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Departments - Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    /* Additional local styles for the improved UI */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-filter {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-filter input, 
+    .search-filter select {
+      padding: 0.8rem;
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+      width: 250px;
+    }
+
+    .department-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .department-table th, 
+    .department-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .department-table th {
+      background: #f7fafc;
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    .btn-edit {
+      padding: 6px 14px;
+      background: #0f766e;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .btn-delete {
+      padding: 6px 14px;
+      background: transparent;
+      color: #e53e3e;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    /* Add Department Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      width: 420px;
+      border-radius: 12px;
+    }
+
+    .modal-content input,
+    .modal-content select,
+    .modal-content textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+    }
+
+    .modal-content button {
+      padding: 0.8rem 1.4rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-close {
+      background: #eee;
+    }
+  </style>
+
+  <script>
+    function openModal() {
+      document.getElementById("addDeptModal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("addDeptModal").style.display = "none";
+    }
+  </script>
+</head>
+
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h3>Navigation</h3>
+    <a href="/admin/departments" class="active">Departments</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/add-user">Add User</a>
+  </div>
+
+  <!-- Main -->
+  <div class="admin-main">
+
+    <div class="page-header">
+      <h2>All Departments</h2>
+      <button onclick="openModal()" class="btn-primary">+ Add Department</button>
+    </div>
+
+    <!-- Search + Filter -->
+    <div class="search-filter">
+      <input type="text" placeholder="Search by department name">
+      <select>
+        <option>All</option>
+        <option>UG</option>
+        <option>PG</option>
+        <option>Research</option>
+      </select>
+    </div>
+
+    <!-- Department Table -->
+    <table class="department-table">
+      <thead>
+        <tr>
+          <th>Department Name</th>
+          <th>Type</th>
+          <th>Number of Users</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% departments.forEach(dep => { %>
+          <tr>
+            <td><%= dep.name %></td>
+            <td><%= dep.type %></td>
+            <td><%= dep.userCount || 0 %></td>
+
+            <td>
+              <a href="#" class="btn-edit">Edit</a>
+
+              <a
+                href="/admin/departments/<%= dep._id %>/delete"
+                class="btn-delete"
+              >Delete</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<!-- Add Department Modal -->
+<div class="modal" id="addDeptModal">
+  <div class="modal-content">
+    <h3 style="margin-bottom: 1rem;">Create New Department</h3>
+
+    <form action="/admin/departments/create" method="POST">
+
+      <input type="text" name="name" placeholder="Department Name" required>
+
+      <select name="type" required>
+        <option value="">Select Program Type</option>
+        <option value="UG">UG</option>
+        <option value="PG">PG</option>
+        <option value="Research">Research</option>
+      </select>
+
+      <textarea name="address" placeholder="Department Address" required></textarea>
+
+      <button class="btn-primary" style="width: 100%;">Create</button>
+      
+      <button type="button" onclick="closeModal()" 
+        class="btn-close" style="width: 100%; margin-top: .5rem;">
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

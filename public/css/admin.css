@@ -1,0 +1,85 @@
+body {
+  font-family: 'Segoe UI';
+  background: #f5f7fa;
+}
+
+.admin-wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.sidebar {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.sidebar a {
+  display: block;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  text-decoration: none;
+  color: #333;
+  background: #e5e7eb;
+  font-weight: 500;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: #d5d8dc;
+}
+
+.admin-main h2 {
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.inline-edit input,
+.inline-edit select {
+  margin-right: 5px;
+  padding: 0.4rem;
+}
+
+.btn-small {
+  padding: 0.3rem 0.7rem;
+  background: #667eea;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.btn-danger {
+  background: #e53e3e !important;
+}
+
+.form-box input,
+.form-box select {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-primary {
+  padding: 0.8rem 1.2rem;
+  background: #667eea;
+  color: white;
+  border-radius: 8px;
+  border: none;
+}

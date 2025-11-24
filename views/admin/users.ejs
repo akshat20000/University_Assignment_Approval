@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Users - Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h3>Navigation</h3>
+    <a href="/admin/departments">Departments</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/add-user">Add User</a>
+  </div>
+
+  <!-- Main -->
+  <div class="admin-main">
+    <h2>Users</h2>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Department</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.role %></td>
+            <td><%= user.department ? user.department.name : 'N/A' %></td>
+
+            <td>
+              <form action="/admin/users/<%= user._id %>/update" method="POST" class="inline-edit">
+
+                <input type="text" name="name" value="<%= user.name %>" required>
+
+                <input type="email" name="email" value="<%= user.email %>" required>
+
+                <select name="role" required>
+                  <option value="student" <%= user.role === "student" ? "selected" : "" %>>Student</option>
+                  <option value="professor" <%= user.role === "professor" ? "selected" : "" %>>Professor</option>
+                  <option value="hod" <%= user.role === "hod" ? "selected" : "" %>>HOD</option>
+                  <option value="admin" <%= user.role === "admin" ? "selected" : "" %>>Admin</option>
+                </select>
+
+                <select name="department">
+                  <option value="">None</option>
+                  <% departments.forEach(dep => { %>
+                    <option value="<%= dep._id %>" <%= user.department && user.department._id == dep._id ? "selected" : "" %>>
+                      <%= dep.name %>
+                    </option>
+                  <% }) %>
+                </select>
+
+                <button class="btn-small">Update</button>
+              </form>
+
+              <a href="/admin/users/<%= user._id %>/delete"
+                 class="btn-small btn-danger">
+                Delete
+              </a>
+
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+
+</body>
+</html>

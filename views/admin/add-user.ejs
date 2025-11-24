@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add User - Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <div class="sidebar">
+    <h3>Navigation</h3>
+    <a href="/admin/departments">Departments</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/add-user" class="active">Add User</a>
+  </div>
+
+  <div class="admin-main">
+    <h2>Create New User</h2>
+
+    <form action="/admin/users" method="POST" class="form-box">
+
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+
+      <select name="role" required>
+        <option value="student">Student</option>
+        <option value="professor">Professor</option>
+        <option value="hod">HOD</option>
+        <option value="admin">Admin</option>
+      </select>
+
+      <select name="department">
+        <option value="">No Department</option>
+        <% departments.forEach(dep => { %>
+          <option value="<%= dep._id %>"><%= dep.name %></option>
+        <% }) %>
+      </select>
+
+      <button class="btn btn-primary">Create User</button>
+    </form>
+  </div>
+
+</div>
+
+</body>
+</html>
