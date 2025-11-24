@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Department - Admin Panel</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .nav h1 { font-size: 1.5rem; }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 500;
+    }
+    .nav-links a:hover { text-decoration: underline; }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+      margin-bottom: 2rem;
+      color: #4a5568;
+      font-size: 1.75rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    .required::after {
+      content: " *";
+      color: #f56565;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .help-text {
+      font-size: 0.875rem;
+      color: #718096;
+      margin-top: 0.25rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 1rem;
+      margin-right: 1rem;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover { background: #5568d3; }
+    .btn-secondary {
+      background: #718096;
+      color: white;
+    }
+    .btn-secondary:hover { background: #4a5568; }
+    .alert-error {
+      background: #fed7d7;
+      color: #742a2a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border: 1px solid #fc8181;
+    }
+    .form-actions {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="nav">
+      <h1>📚 Assignment System - Admin</h1>
+      <div class="nav-links">
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/departments">Departments</a>
+        <a href="/admin/reports">Reports</a>
+        <a href="/auth/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>Create New Department</h2>
+
+      <% if (error) { %>
+        <div class="alert-error"><%= error %></div>
+      <% } %>
+
+      <form action="/admin/departments/create" method="POST">
+        <div class="form-group">
+          <label for="name" class="required">Department Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            required 
+            placeholder="e.g., Computer Science & Engineering"
+            maxlength="100"
+          >
+          <div class="help-text">Enter the full name of the department</div>
+        </div>
+
+        <div class="form-group">
+          <label for="type" class="required">Program Type</label>
+          <select id="type" name="type" required>
+            <option value="">Select Program Type</option>
+            <option value="UG">UG (Undergraduate)</option>
+            <option value="PG">PG (Postgraduate)</option>
+            <option value="Research">Research</option>
+          </select>
+          <div class="help-text">Select the primary program type offered by this department</div>
+        </div>
+
+        <div class="form-group">
+          <label for="address" class="required">Address</label>
+          <textarea 
+            id="address" 
+            name="address" 
+            required 
+            placeholder="Enter the department's physical location or building details"
+          ></textarea>
+          <div class="help-text">Provide the complete address or location of the department</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Create Department</button>
+          <a href="/admin/departments" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

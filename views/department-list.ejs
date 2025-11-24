@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Departments - Admin Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .nav h1 {
+      font-size: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .card-header h2 {
+      color: #4a5568;
+      font-size: 1.75rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+
+    .btn-success {
+      background: #48bb78;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #f56565;
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-secondary {
+      background: #718096;
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #f7fafc;
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    tr:hover {
+      background: #f7fafc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-ug {
+      background: #bee3f8;
+      color: #2c5282;
+    }
+
+    .badge-pg {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+
+    .badge-research {
+      background: #faf089;
+      color: #744210;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .page-link {
+      padding: 0.5rem 1rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #4a5568;
+      transition: all 0.3s;
+    }
+
+    .page-link:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .page-link.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .alert-success {
+      background: #c6f6d5;
+      color: #22543d;
+      border: 1px solid #9ae6b4;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background: white;
+      margin: 10% auto;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #4a5568;
+    }
+
+    .modal-body {
+      margin-bottom: 2rem;
+      color: #718096;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="nav">
+      <h1>📚 Assignment System - Admin</h1>
+      <div class="nav-links">
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/departments">Departments</a>
+        <a href="/admin/reports">Reports</a>
+        <a href="/auth/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Departments Management</h2>
+        <a href="/admin/departments/create" class="btn btn-primary">+ Create Department</a>
+      </div>
+
+      <% if (typeof success !=='undefined' && success==='created' ) { %>
+        <div class="alert alert-success">Department created successfully!</div>
+        <% } else if (typeof success !=='undefined' && success==='updated' ) { %>
+          <div class="alert alert-success">Department updated successfully!</div>
+          <% } %>
+
+            <form method="GET" action="/admin/departments">
+              <div class="filters">
+                <div class="filter-group">
+                  <label for="search">Search by Name</label>
+                  <input type="text" id="search" name="search" value="<%= search %>"
+                    placeholder="Enter department name...">
+                </div>
+                <div class="filter-group">
+                  <label for="type">Filter by Type</label>
+                  <select id="type" name="type">
+                    <option value="">All Types</option>
+                    <option value="UG" <%=typeFilter==='UG' ? 'selected' : '' %>>UG</option>
+                    <option value="PG" <%=typeFilter==='PG' ? 'selected' : '' %>>PG</option>
+                    <option value="Research" <%=typeFilter==='Research' ? 'selected' : '' %>>Research</option>
+                  </select>
+                </div>
+                <div class="filter-group" style="display: flex; align-items: flex-end;">
+                  <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+              </div>
+            </form>
+
+            <% if (departments.length===0) { %>
+              <p style="text-align: center; color: #718096; padding: 2rem;">No departments found.</p>
+              <% } else { %>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Department Name</th>
+                      <th>Type</th>
+                      <th>Address</th>
+                      <th>Users</th>
+                      <th>Created</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% departments.forEach(dept=> { %>
+                      <tr>
+                        <td><strong>
+                            <%= dept.name %>
+                          </strong></td>
+                        <td>
+                          <span class="badge badge-<%= dept.type.toLowerCase() %>">
+                            <%= dept.type %>
+                          </span>
+                        </td>
+                        <td>
+                          <%= dept.address %>
+                        </td>
+                        <td>
+                          <%= dept.userCount %>
+                        </td>
+                        <td>
+                          <%= new Date(dept.createdAt).toLocaleDateString() %>
+                        </td>
+                        <td>
+                          <a href="/admin/departments/<%= dept._id %>/edit" class="btn btn-secondary">Edit</a>
+                          <button data-id="<%= dept._id %>" data-name="<%= dept.name %>"
+                            data-count="<%= dept.userCount %>"
+                            onclick="confirmDelete(this.dataset.id, this.dataset.name, this.dataset.count)"
+                            class="btn btn-danger">Delete</button>
+                        </td>
+                      </tr>
+                      <% }); %>
+                  </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <% if (totalPages> 1) { %>
+                  <div class="pagination">
+                    <% for (let i=1; i <=totalPages; i++) { %>
+                      <a href="/admin/departments?page=<%= i %>&search=<%= search %>&type=<%= typeFilter %>"
+                        class="page-link <%= currentPage === i ? 'active' : '' %>">
+                        <%= i %>
+                      </a>
+                      <% } %>
+                  </div>
+                  <% } %>
+                    <% } %>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Confirm Deletion</div>
+      <div class="modal-body" id="modalMessage"></div>
+      <div class="modal-footer">
+        <button onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+        <button onclick="deleteDepartment()" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let departmentToDelete = null;
+
+    function confirmDelete(id, name, userCount) {
+      departmentToDelete = id;
+      const modal = document.getElementById('deleteModal');
+      const message = document.getElementById('modalMessage');
+      const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+      if (userCount > 0) {
+        message.innerHTML = `<strong>Warning:</strong> Cannot delete department "${name}" because it has ${userCount} associated user(s). Please reassign or remove users first.`;
+        confirmBtn.style.display = 'none';
+      } else {
+        message.innerHTML = `Are you sure you want to delete the department "<strong>${name}</strong>"? This action cannot be undone.`;
+        confirmBtn.style.display = 'inline-block';
+      }
+
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+      departmentToDelete = null;
+    }
+
+    async function deleteDepartment() {
+      if (!departmentToDelete) return;
+
+      try {
+        const response = await fetch(`/admin/departments/${departmentToDelete}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          window.location.reload();
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        alert('Error deleting department');
+        console.error(error);
+      }
+
+      closeModal();
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+      const modal = document.getElementById('deleteModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+  </script>
+</body>
+
+</html>

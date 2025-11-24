@@ -5,8 +5,6 @@ const Assignment = require('../Schemas/assignment');
 const Audit = require('../Schemas/audit');
 const { requireAuth, requireRole } = require('../Middlewares/auth');
 
-
-
 //multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -21,16 +19,16 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 } 
+  limits: { fileSize: 10 * 1024 * 1024 }
 });
 
 
-const create= async (req, res) => {
+const create = async (req, res) => {
   try {
     const { title, description, course, saveAs } = req.body;
-    
+
     const assignment = await Assignment.create({
       title,
       description,
@@ -42,37 +40,37 @@ const create= async (req, res) => {
       status: saveAs === 'submit' ? 'submitted' : 'draft',
       submittedAt: saveAs === 'submit' ? new Date() : null
     });
-    
+
     await logAudit(assignment._id, req.session.userId, 'CREATE', `Assignment ${saveAs === 'submit' ? 'submitted' : 'saved as draft'}`);
-    
+
     res.redirect('/');
   } catch (error) {
     res.status(500).send('Error creating assignment');
   }
 };
 
-const getbyid= async (req, res) => {
+const getbyid = async (req, res) => {
   try {
     const assignment = await Assignment.findById(req.params.id)
       .populate('studentId')
       .populate('professorId')
       .populate('hodId');
-    
+
     if (!assignment) {
       return res.status(404).send('Assignment not found');
     }
-    
+
     const audits = await Audit.find({ assignmentId: assignment._id })
       .populate('userId')
       .sort({ timestamp: -1 });
-    
-    res.render('assignment-detail', { 
-      assignment, 
+
+    res.render('assignment-detail', {
+      assignment,
       audits,
-      user: { 
-        id: req.session.userId, 
-        name: req.session.userName, 
-        role: req.session.userRole 
+      user: {
+        id: req.session.userId,
+        name: req.session.userName,
+        role: req.session.userRole
       }
     });
   } catch (error) {
@@ -80,42 +78,50 @@ const getbyid= async (req, res) => {
   }
 };
 
-const submit= async (req, res) => {
+const submit = async (req, res) => {
   try {
     const assignment = await Assignment.findById(req.params.id);
-    
+
     if (assignment.studentId.toString() !== req.session.userId) {
       return res.status(403).send('Access denied');
     }
-    
+
+    if (assignment.status !== 'draft') {
+      return res.status(400).send('Assignment can only be submitted from draft status');
+    }
+
     assignment.status = 'submitted';
     assignment.submittedAt = new Date();
     await assignment.save();
-    
+
     await logAudit(assignment._id, req.session.userId, 'SUBMIT', 'Assignment submitted for review');
-    
+
     res.redirect('/');
   } catch (error) {
     res.status(500).send('Error submitting assignment');
   }
 };
 
-const resubmit=async (req, res) => {
+const resubmit = async (req, res) => {
   try {
     const assignment = await Assignment.findById(req.params.id);
-    
+
     if (assignment.studentId.toString() !== req.session.userId) {
       return res.status(403).send('Access denied');
     }
-    
-    
+
+    if (assignment.status !== 'rejected' && assignment.status !== 'draft') {
+      return res.status(400).send('Assignment can only be resubmitted if rejected or in draft');
+    }
+
+
     assignment.previousVersions.push({
       filePath: assignment.filePath,
       feedback: assignment.professorFeedback || assignment.hodFeedback,
       reviewedAt: new Date(),
       version: assignment.version
     });
-    
+
     assignment.version += 1;
     assignment.filePath = req.file.path;
     assignment.fileName = req.file.originalname;
@@ -123,10 +129,10 @@ const resubmit=async (req, res) => {
     assignment.submittedAt = new Date();
     assignment.professorFeedback = null;
     assignment.hodFeedback = null;
-    
+
     await assignment.save();
     await logAudit(assignment._id, req.session.userId, 'RESUBMIT', `Assignment resubmitted (Version ${assignment.version})`);
-    
+
     res.redirect('/');
   } catch (error) {
     res.status(500).send('Error resubmitting assignment');
@@ -136,15 +142,19 @@ const resubmit=async (req, res) => {
 
 
 //professor 
-const professor_review= async (req, res) => {
+const professor_review = async (req, res) => {
   try {
     const { action, feedback } = req.body;
     const assignment = await Assignment.findById(req.params.id);
-    
+
+    if (assignment.status !== 'submitted') {
+      return res.status(400).send('Assignment is not in submitted status');
+    }
+
     assignment.professorId = req.session.userId;
     assignment.professorFeedback = feedback;
     assignment.professorReviewedAt = new Date();
-    
+
     if (action === 'approve') {
       assignment.status = 'under_hod_review';
       await logAudit(assignment._id, req.session.userId, 'PROFESSOR_APPROVE', 'Forwarded to HOD');
@@ -152,9 +162,9 @@ const professor_review= async (req, res) => {
       assignment.status = 'rejected';
       await logAudit(assignment._id, req.session.userId, 'PROFESSOR_REJECT', 'Assignment rejected by professor');
     }
-    
+
     await assignment.save();
-    res.redirect('/dashboard');
+    res.redirect('/');
   } catch (error) {
     console.log(req.body)
     res.status(500).send('Error processing review');
@@ -162,15 +172,19 @@ const professor_review= async (req, res) => {
 };
 
 //hod
-const hod_review= async (req, res) => {
+const hod_review = async (req, res) => {
   try {
     const { action, feedback } = req.body;
     const assignment = await Assignment.findById(req.params.id);
-    
+
+    if (assignment.status !== 'under_hod_review') {
+      return res.status(400).send('Assignment is not under HOD review');
+    }
+
     assignment.hodId = req.session.userId;
     assignment.hodFeedback = feedback;
     assignment.hodReviewedAt = new Date();
-    
+
     if (action === 'approve') {
       assignment.status = 'approved';
       assignment.approvedAt = new Date();
@@ -179,7 +193,7 @@ const hod_review= async (req, res) => {
       assignment.status = 'rejected';
       await logAudit(assignment._id, req.session.userId, 'HOD_REJECT', 'Assignment rejected by HOD');
     }
-    
+
     await assignment.save();
     res.redirect('/');
   } catch (error) {
@@ -188,4 +202,4 @@ const hod_review= async (req, res) => {
 };
 
 
-module.exports={create,getbyid, submit, resubmit, professor_review, hod_review}
+module.exports = { create, getbyid, submit, resubmit, professor_review, hod_review }
